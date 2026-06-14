@@ -385,4 +385,4 @@ Bagan berikut memetakan status kesehatan dan frekuensi pembaruan sub-fitur di ba
 
 ## 💡 Curiosity & Contact
 
-For inquiries regarding architectural reviews, commercial integration of the Zero-Trust mesh network layer, or technical collaboration, feel free to open an issue or reach out directly!
+For inquiries regarding architectural reviews, commercial integration of the Zero-Trust mesh network layer, or technical collaboration, feel free to reach out!
