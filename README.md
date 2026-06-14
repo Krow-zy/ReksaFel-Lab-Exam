@@ -115,6 +115,19 @@ flowchart TD
 ## 📋 Repository Contents
 
 * [reksafel_feature_status.md](reksafel_feature_status.md) — Detailed feature checklist, backend system mechanisms, and development logs mapping version upgrades (`v1.0.0` to `v1.3.0`).
+* **`pkg/telemetry/`** — Data structures and serialization methods defining student screen capture payloads, event snapshots, and anomaly logging.
+* **`pkg/net/`** — Core TCP network latency probing routines implementing asynchronous concurrency (Goroutines, Channels, and Context timeouts).
+* **`pkg/api/`** — Standard router specifications and API authorization middleware representations.
+* **`pkg/config/`** — Conceptual local configuration sealer utilizing secure AES-GCM encryption wrappers.
+
+---
+
+## 💻 Development & Public Specifications
+
+This repository contains the open-source API specifications, client telemetry data schemas, network probing routines, and local configuration sealing concepts of the **ReksaFel** ecosystem. 
+
+> [!NOTE]
+> To comply with security policies and target deployment guidelines, the central orchestrator control plane, mesh networking routers, and backend credentials are not included in this public specification layout.
 
 ---
 
