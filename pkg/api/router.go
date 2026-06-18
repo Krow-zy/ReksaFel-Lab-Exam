@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -16,6 +17,14 @@ type Response struct {
 	Success bool        `json:"success"`
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
+}
+
+// LoggerMiddleware logs incoming requests' method, path, and client address.
+func (s *APIServer) LoggerMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("[API] %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
+		next(w, r)
+	}
 }
 
 // AuthMiddleware verifies the custom authorization token in the request headers.
@@ -39,7 +48,7 @@ func (s *APIServer) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 // SetupRoutes registers handlers for endpoints in a standard pattern.
 func (s *APIServer) SetupRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("/api/v1/status", s.AuthMiddleware(s.handleStatus))
+	mux.HandleFunc("/api/v1/status", s.LoggerMiddleware(s.AuthMiddleware(s.handleStatus)))
 }
 
 func (s *APIServer) handleStatus(w http.ResponseWriter, r *http.Request) {
