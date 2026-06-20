@@ -1,6 +1,9 @@
 package telemetry
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 // ForbiddenProcess represents a blacklisted process running on a client machine.
 type ForbiddenProcess struct {
@@ -22,4 +25,19 @@ func DefaultBlacklist() []string {
 		"anydesk",
 		"wireshark",
 	}
+}
+
+// ScanProcesses matches a list of active process names against a blacklist.
+// Case-insensitive comparisons are performed using the strings standard package.
+func ScanProcesses(active []string, blacklist []string) []string {
+	var found []string
+	for _, act := range active {
+		for _, black := range blacklist {
+			if strings.EqualFold(act, black) {
+				found = append(found, act)
+				break
+			}
+		}
+	}
+	return found
 }
