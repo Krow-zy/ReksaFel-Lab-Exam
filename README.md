@@ -90,10 +90,10 @@ flowchart TD
 
 This repository contains the open-source API specifications, telemetry schemas, and local encryption concepts representing the ReksaFel system:
 
-* **`pkg/telemetry/`** — Data structures, validation rules, serialization schemas defining client system info (`sysinfo.go`), and event logs.
-* **`pkg/net/`** — Network interface detection (`interface.go`) and concurrent TCP latency probing routines utilizing Goroutines and Context timeouts.
-* **`pkg/api/`** — Standard API router specifications, request logger middleware, and authorization middleware representations.
-* **`pkg/config/`** — Configuration schema validators (`validation.go`) and conceptual local configuration sealer demonstrating safe GCM initialization vector generation.
+* **`pkg/telemetry/`** — Data structures, validation rules, active process blacklists (`process.go`), client system info (`sysinfo.go`), and event logs.
+* **`pkg/net/`** — Network interface detection (`interface.go`), subnet route validation (`routing.go`), and concurrent TCP latency probing.
+* **`pkg/api/`** — Standard API router specifications, custom logger middleware, API endpoint representations, and HTTP dispatcher clients (`client.go`).
+* **`pkg/config/`** — Configuration schema validators (`validation.go`), local JSON file storage (`io.go`), payload integrity signers (`signing.go`), and conceptual local configuration GCM sealers.
 
 ### 🧪 Verifying & Testing
 You can compile and run the entire test suite locally to verify the code logic and security parameters:
