@@ -194,7 +194,7 @@ Bagan berikut memetakan status kesehatan dan frekuensi pembaruan sub-fitur di ba
 
 ### Metrik Trafik Jaringan
 <details>
-<summary>🟢 <b>Status: Stabil</b> — [🔄 3 Update] — <i>Klik untuk detail</i></summary>
+<summary>🟢 <b>Status: Stabil</b> — [🔄 4 Update] — <i>Klik untuk detail</i></summary>
 <br>
 
 *   **Deskripsi Fungsional:**
@@ -207,6 +207,10 @@ Bagan berikut memetakan status kesehatan dan frekuensi pembaruan sub-fitur di ba
     *   Menggambar kurva bezier SVG indah penghubung PC Admin dan Klien secara real-time (`updateVizLines()`) pada tab-switch & window resize.
     *   Memicu animasi aliran paket data pulang-pergi terurut: Paket Request (Biru) meluncur dari Admin ke Klien, disusul jeda singkat, kemudian Paket Response (Hijau) kembali dari Klien ke Admin menggunakan elemen `<animateMotion>` SVG dengan pengikatan peristiwa SMIL (`begin="..."`).
 *   **Histori Log Perubahan:**
+    *   `v1.4.0` (2026-06-22): **[STABLE SMOOTH TIMING & ACCURATE METRICS]**
+        *   Perbaikan bug transisi prematur ke status sukses dengan mengganti `metrics.total_received` menjadi `expectedTotal` (`requestsPerClient * onlineClientsCount`).
+        *   Implementasi durasi minimum visualisasi tes sebesar 5 detik (decoupled dari backend) agar pengujian berkecepatan tinggi (misal, jeda 10ms) tetap menampilkan simulasi aliran paket yang dapat dipantau oleh mata manusia.
+        *   Penggunaan kembali animasi putaran SVG SMIL yang lambat dan elegan demi menjaga kejelasan estetika alur pengiriman request (biru) dan response (hijau) tanpa tumpang tindih atau melompat secara kasar.
     *   `v1.3.0` (2026-06-13): **[UI RESTRUCTURE & SEQUENTIAL FLOW]**
         *   Restrukturasi layout visualisasi menjadi Side-by-Side Flex Layout (Visualisasi real-time interaktif di sebelah kiri, Form Pengaturan & Metrik Live dalam satu Sidebar ringkas di sebelah kanan).
         *   Implementasi alur pengiriman paket berurutan (Package Request Biru terkirim lebih dahulu dari Admin ke Klien, diikuti Package Response Hijau yang meluncur balik dari Klien ke Admin setelah jeda).
@@ -218,16 +222,18 @@ Bagan berikut memetakan status kesehatan dan frekuensi pembaruan sub-fitur di ba
 
 ### Monitoring Resource PC Admin
 <details>
-<summary>🟢 <b>Status: Stabil</b> — [🔄 2 Update] — <i>Klik untuk detail</i></summary>
+<summary>🟢 <b>Status: Stabil</b> — [🔄 3 Update] — <i>Klik untuk detail</i></summary>
 <br>
 
 *   **Deskripsi Fungsional:**
-    Indikator performa perangkat keras PC Admin secara real-time yang mencakup: persentase beban CPU, penggunaan memori RAM oleh aplikasi Go, dan jumlah soket koneksi TCP aktif di port 8080.
+    Indikator performa perangkat keras PC Admin secara real-time yang mencakup: persentase beban CPU, penggunaan memori RAM oleh aplikasi Go, dan jumlah soket koneksi TCP aktif di port 7310.
 *   **Mekanisme Di Belakang Layar (Sistem):**
     *   CPU: Dieksekusi secara berkala menggunakan perintah `wmic cpu get LoadPercentage` dengan fallback cmdlet powershell.
     *   RAM: Membaca alokasi memori heap internal Go lewat `runtime.ReadMemStats()`.
-    *   TCP Socket: Dihitung dengan mengeksekusi shell `cmd /c netstat -ano | findstr :8080 | find /c /v ""`.
+    *   TCP Socket: Dihitung dengan mengeksekusi shell `cmd /c netstat -ano | findstr :7310 | find /c /v ""`.
 *   **Histori Log Perubahan:**
+    *   `v1.2.0` (2026-06-22): **[PORT MIGRATION TO 7310]**
+        *   Pembalikan port deteksi koneksi TCP aktif dari `:8080` menjadi `:7310` pasca migrasi port utama ReksaFel.
     *   `v1.1.1` (2026-06-08): Penambahan fallback PowerShell untuk pembacaan persentase CPU jika wmic dibatasi sistem.
     *   `v1.0.0` (2026-05-20): Pembuatan modul penarik informasi utilisasi hardware lokal.
 </details>
@@ -236,27 +242,39 @@ Bagan berikut memetakan status kesehatan dan frekuensi pembaruan sub-fitur di ba
 
 ### Auth Key Management
 <details>
-<summary>🟢 <b>Status: Stabil</b> — [🔄 1 Update] — <i>Klik untuk detail</i></summary>
+<summary>🟢 <b>Status: Stabil</b> — [🔄 3 Update] — <i>Klik untuk detail</i></summary>
 <br>
 
 *   **Deskripsi Fungsional:**
     Manajemen kunci otentikasi ReksaFel Zero-Trust. Pengawas dapat menginput kunci baru, memantau tanggal pembaruan, menghitung sisa hari aktif kunci, dan mengirimkannya ke semua klien secara nirkabel.
 *   **Mekanisme Di Belakang Layar (Sistem):**
-    *   Mendekripsi kunci `config.json` lokal menggunakan AES-256-GCM berbasis kunci Windows `MachineGuid`.
-    *   Tombol PUSH mengirimkan kunci baru secara aman ke port 8081 masing-masing PC klien aktif.
+    *   Mendekripsi kunci `config.json` lokal menggunakan enkripsi AES-256-GCM.
+    *   Derivasi kunci AES ditautkan secara native ke kunci perangkat keras lokal (`MachineGuid` di HKLM Registry) menggunakan pustaka internal Windows API Go (`golang.org/x/sys/windows/registry`) menggantikan pemanggilan subprocess PowerShell (memangkas waktu baca dari ~450ms menjadi <1ms).
+    *   Mengamankan server dashboard dengan membatasi ukuran request body (maksimum 4KB untuk registrasi, dan 10MB untuk log/screenshot) lewat `http.MaxBytesReader` demi mencegah serangan kehabisan memori (OOM).
+    *   Tombol PUSH mengirimkan kunci baru secara aman ke port 7311 masing-masing PC klien aktif dengan penanganan eror JSON marshal yang tervalidasi.
 *   **Histori Log Perubahan:**
+    *   `v1.2.0` (2026-06-22): **[PORT MIGRATION TO 7311]**
+        *   Migrasi port penerima push otentikasi nirkabel pada klien dari port `:8081` ke port kustom `:7311` (FEL-1).
+    *   `v1.1.0` (2026-06-21): **[NATIVE PERFORMANCE & YAGNI REFACTOR]**
+        *   Migrasi penuh pembacaan registri `MachineGuid` dari subprocess PowerShell ke Go Windows Registry API.
+        *   Penerapan batas payload HTTP `http.MaxBytesReader` di backend dashboard guna melindungi port listener dari OOM.
+        *   Penambahan berkas unit test `config_test.go` untuk verifikasi integritas enkripsi.
     *   `v1.0.0` (2026-05-15): Inisialisasi sistem manajemen enkripsi key rotation dan push nirkabel.
 </details>
 
-### System Information
+### System Information & Port Migration
 <details>
-<summary>🟢 <b>Status: Stabil</b> — [🔄 1 Update] — <i>Klik untuk detail</i></summary>
+<summary>🟢 <b>Status: Stabil</b> — [🔄 2 Update] — <i>Klik untuk detail</i></summary>
 <br>
 
 *   **Deskripsi Fungsional:**
-    Informasi sistem statis mengenai lokasi berkas konfigurasi lokal (`C:\ProgramData\ZeroGap\config.json`) dan port listener utama (8080).
+    Informasi sistem statis mengenai lokasi berkas konfigurasi lokal (`C:\ProgramData\ZeroGap\config.json`), port listener utama (`7310`), serta pengelolaan backward compatibility jaringan.
 *   **Mekanisme Di Belakang Layar (Sistem):**
-    *   Menampilkan informasi konfigurasi aplikasi untuk panduan instalasi sistem.
+    *   Menampilkan rincian port aktif ReksaFel (FEL Leetspeak): `7310` (Dashboard), `7311` (Key Push), dan `7312` (Load Test).
+    *   **Self-Healing Port Migration (Client):** Pada saat inisialisasi aplikasi klien (`StudentLogin`), sistem mendeteksi apakah `admin_url` di `config.json` lokal masih menggunakan port lama `:8080`. Jika ya, sistem secara otomatis melakukan perbaikan mandiri (*self-healing*) dengan memigrasikan port tersebut menjadi `:7310` secara langsung di memori dan menulis pembaruan tersebut ke berkas konfigurasi di disk guna mencegah kegagalan login.
 *   **Histori Log Perubahan:**
+    *   `v1.2.0` (2026-06-22): **[PORT MIGRATION & SELF-HEALING SYSTEM]**
+        *   Migrasi port utama sistem ke port ReksaFel (FEL Leetspeak `7310`, `7311`, `7312`).
+        *   Implementasi sistem pemulihan otomatis (*self-healing*) pada klien untuk mendeteksi dan memperbarui konfigurasi lawas `:8080` menjadi `:7310` tanpa intervensi manual.
     *   `v1.0.0` (2026-05-15): Pembuatan halaman rincian parameter server.
 </details>
