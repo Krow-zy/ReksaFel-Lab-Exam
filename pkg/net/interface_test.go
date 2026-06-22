@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestHasInterfacePrefix(t *testing.T) {
+func TestInterfacePrefix(t *testing.T) {
 	// We can test with loopback prefix or common adapters like 'lo' or 'eth' or 'win'
 	// Since we are running on Windows, 'loopback' or similar is usually present.
 	// But let's check a non-existent prefix first.
@@ -25,7 +25,7 @@ func TestHasInterfacePrefix(t *testing.T) {
 	// if it doesn't match, we just verify the behavior.
 }
 
-func TestGetLocalIPv4(t *testing.T) {
+func TestLocalIPv4(t *testing.T) {
 	ip, err := GetLocalIPv4()
 	// Either we get an active local IPv4 or an error if offline.
 	// In most test environments there is a local IP.
