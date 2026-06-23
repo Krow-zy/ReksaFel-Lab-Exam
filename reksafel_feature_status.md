@@ -87,9 +87,9 @@ Bagian ini menyajikan visualisasi diagram alur kerja (*data track*) beserta desk
 #### Diagram Alur Data Fitur Monitor
 ```mermaid
 flowchart LR
-    Klien["🖥️ PC Klien (Meja 12)"] -->|1. Heartbeat/Alert - POST Port Telemetri| AdminAPI["⚙️ Admin HTTP Listener"]
+    Klien["🖥️ PC Klien - Meja 12"] -->|1. Heartbeat/Alert - POST Port Telemetri| AdminAPI["⚙️ Admin HTTP Listener"]
     AdminAPI -->|2. Validasi & Update Cache| RAM["🧠 Admin RAM Memory"]
-    RAM -->|3. GetClientsStatus()| Wails["🌐 Wails Binding"]
+    RAM -->|3. Ambil Status Klien| Wails["🌐 Wails Binding"]
     Wails -->|4. Render UI| Grid["🎨 Seating Map Grid (8x5)"]
     Wails -->|5. Render Alerts| Sidebar["🔔 Live Alerts Sidebar"]
 ```
@@ -261,7 +261,7 @@ flowchart TD
     Dashboard["💻 Settings Tab Interface"] -->|1. Ambil Key & Derivasi| Registry["🔑 Registry (Identitas Hardware)"]
     Registry -->|2. Dekripsi Kunci| Decrypter["🔓 Config Loader"]
     Decrypter -->|3. Tampilkan Sisa Masa Aktif| UI["🎨 Settings UI Panel"]
-    Decrypter -->|4. Push Key - POST Port Komunikasi| ClientKeyReceiver["🤖 Client Daemon"]
+    Dashboard -->|4. Push Key - POST Port Komunikasi| ClientKeyReceiver["🤖 Client Daemon"]
     ClientKeyReceiver -->|5. Tulis Enkripsi Lokal| ClientConfig["💾 File Konfigurasi Klien"]
     ClientConfig -->|6. Deteksi Port Lama| SelfHealing["🛠️ Self-Healing Port Migration"]
     SelfHealing -->|7. Auto Update Port ke Port Telemetri| ClientConfig
@@ -296,15 +296,15 @@ flowchart TD
         *   Implementasi sistem pemulihan otomatis (*self-healing*) pada klien untuk mendeteksi dan memperbarui konfigurasi port lawas secara dinamis tanpa intervensi manual.
     *   `v1.0.0` (2026-05-15): Pembuatan halaman rincian parameter server.
 
-#### C. Client Telemetry Daemon (TailClient.exe)
+#### C. Client Telemetry Daemon (AgentClient.exe)
 *   **Deskripsi Fungsional:**
-    Latar belakang sistem client agent daemon (`TailClient.exe`) yang bertugas mengirimkan status detak jantung (*heartbeat*) berkala ke dashboard pengawas, mengawasi status keaktifan VPN, serta mendengarkan perintah push/load pada port penerima perintah.
+    Latar belakang sistem client agent daemon (`AgentClient.exe`) yang bertugas mengirimkan status detak jantung (*heartbeat*) berkala ke dashboard pengawas, mengawasi status keaktifan VPN, serta mendengarkan perintah push/load pada port penerima perintah.
 *   **Mekanisme Di Belakang Layar (Sistem):**
     *   Berjalan sebagai background service tersembunyi yang dijalankan secara otomatis saat startup komputer klien.
     *   Membaca nomor meja teraktif dari berkas identitas kursi lokal.
     *   Mengirimkan HTTP POST telemetry secara periodik ke alamat pengawas.
 *   **Histori Log Perubahan:**
     *   `v1.2.1` (2026-06-23): **[STARTUP HOOK MIGRATION - CURRENT UPDATE]**
-        *   Membuat mekanisme global startup hook `ZeroGapStartListenerHook` pada entrypoint `tailscaled.go`.
-        *   Melakukan pendaftaran/binding hook di dalam modul Windows `init()` di berkas `tailscaled_windows.go` agar memicu eksekusi `startZeroGapBackgroundListener()` saat program dipanggil melalui **Windows Task Scheduler** (`schtasks`).
+        *   Membuat mekanisme global startup hook pada modul telemetri utama.
+        *   Melakukan pendaftaran/binding hook di dalam inisialisasi telemetri Windows agar memicu eksekusi listener latar belakang saat program dipanggil melalui **Windows Task Scheduler** (`schtasks`).
         *   Pembaruan ini memecahkan bug di mana heartbeat telemetri tidak terkirim saat dideploy secara massal sebagai scheduled task (karena bypass mode service tidak terpenuhi).
