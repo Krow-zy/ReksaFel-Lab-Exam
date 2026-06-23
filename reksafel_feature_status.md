@@ -87,7 +87,7 @@ Bagian ini menyajikan visualisasi diagram alur kerja (*data track*) beserta desk
 #### Diagram Alur Data Fitur Monitor
 ```mermaid
 flowchart LR
-    Klien["🖥️ PC Klien (Meja 12)"] -->|1. Heartbeat/Alert (POST Port Telemetri)| AdminAPI["⚙️ Admin HTTP Listener"]
+    Klien["🖥️ PC Klien (Meja 12)"] -->|1. Heartbeat/Alert - POST Port Telemetri| AdminAPI["⚙️ Admin HTTP Listener"]
     AdminAPI -->|2. Validasi & Update Cache| RAM["🧠 Admin RAM Memory"]
     RAM -->|3. GetClientsStatus()| Wails["🌐 Wails Binding"]
     Wails -->|4. Render UI| Grid["🎨 Seating Map Grid (8x5)"]
@@ -197,10 +197,10 @@ flowchart TD
 #### Diagram Alur Data Fitur Resource Testing
 ```mermaid
 flowchart TD
-    Dashboard["💻 Form Kontrol Admin"] -->|1. Picu Stress Test (POST Port Simulasi)| ClientDaemon["🤖 Client Load Receiver"]
+    Dashboard["💻 Form Kontrol Admin"] -->|1. Picu Stress Test - POST Port Simulasi| ClientDaemon["🤖 Client Load Receiver"]
     ClientDaemon -->|2. Validasi IP & Parameter| Check["🛡️ IP Whitelist Guard"]
     Check -->|Sah| Simulator["⚡ Go Load Simulator"]
-    Simulator -->|3. Kirim N Paket Paralel (Jeda X ms)| Dashboard
+    Simulator -->|3. Kirim N Paket Paralel - Jeda X ms| Dashboard
     Dashboard -->|4. Hitung RTT & Throughput| Metrics["📊 Metrik Live & Animasi SVG"]
     Dashboard -->|5. Monitor Hardware| Resource["🔌 CPU/RAM/TCP Admin PC"]
 ```
@@ -261,7 +261,7 @@ flowchart TD
     Dashboard["💻 Settings Tab Interface"] -->|1. Ambil Key & Derivasi| Registry["🔑 Registry (Identitas Hardware)"]
     Registry -->|2. Dekripsi Kunci| Decrypter["🔓 Config Loader"]
     Decrypter -->|3. Tampilkan Sisa Masa Aktif| UI["🎨 Settings UI Panel"]
-    Decrypter -->|4. Push Key (POST Port Komunikasi)| ClientKeyReceiver["🤖 Client Daemon"]
+    Decrypter -->|4. Push Key - POST Port Komunikasi| ClientKeyReceiver["🤖 Client Daemon"]
     ClientKeyReceiver -->|5. Tulis Enkripsi Lokal| ClientConfig["💾 File Konfigurasi Klien"]
     ClientConfig -->|6. Deteksi Port Lama| SelfHealing["🛠️ Self-Healing Port Migration"]
     SelfHealing -->|7. Auto Update Port ke Port Telemetri| ClientConfig
