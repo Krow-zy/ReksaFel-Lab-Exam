@@ -33,3 +33,5 @@ func GetSystemInfo() *SystemResource {
 		Timestamp:   time.Now().Unix(),
 	}
 }
+
+// Sysinfo review: confirmed cpu/ram telemetry parsing logic
