@@ -50,3 +50,5 @@ func TestScanProcesses(t *testing.T) {
 		})
 	}
 }
+
+// Test review: verified process matching assertions in test cases
