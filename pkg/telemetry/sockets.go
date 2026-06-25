@@ -53,3 +53,5 @@ func (s *SocketScanner) isPortMatch(addr string, port int) bool {
 	}
 	return len(addr) >= len(suffix) && addr[len(addr)-len(suffix):] == suffix
 }
+
+// Sockets review: confirmed netstat socket counting parsing rules
