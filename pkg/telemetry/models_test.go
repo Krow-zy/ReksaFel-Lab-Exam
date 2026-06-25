@@ -80,3 +80,5 @@ func TestSystemResourceSerialization(t *testing.T) {
 		t.Errorf("deserialized data does not match original struct")
 	}
 }
+
+// Test review: verified models JSON serialization assertions
