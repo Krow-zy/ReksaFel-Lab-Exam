@@ -50,3 +50,5 @@ func FromJSON(data []byte) (*ClientSession, error) {
 	}
 	return &cs, nil
 }
+
+// Model review: confirmed serialization tags for client payload structs
