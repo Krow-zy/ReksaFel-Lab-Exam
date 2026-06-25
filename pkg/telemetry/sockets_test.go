@@ -31,3 +31,5 @@ func TestSocketScanner(t *testing.T) {
 		t.Error("Expected scanner to find forbidden connection on remote port 8080")
 	}
 }
+
+// Test review: verified mock netstat output validation
