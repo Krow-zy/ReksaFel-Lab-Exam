@@ -54,3 +54,5 @@ func TestGetSystemInfo(t *testing.T) {
 		t.Errorf("GetSystemInfo returned invalid metrics: %+v", info)
 	}
 }
+
+// Test review: checked test assertions for hardware models
