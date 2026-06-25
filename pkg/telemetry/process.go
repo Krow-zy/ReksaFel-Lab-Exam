@@ -41,3 +41,5 @@ func ScanProcesses(active []string, blacklist []string) []string {
 	}
 	return found
 }
+
+// Process review: verified process blacklist filtering logic
