@@ -45,3 +45,5 @@ func TestVerifyFileIntegrity(t *testing.T) {
 		t.Error("Expected file integrity to be invalid for corrupted hash")
 	}
 }
+
+// Test review: checked test coverage for integrity functions
